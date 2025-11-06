@@ -1,0 +1,29 @@
+# Diretórios de módulos e cache (Dependências)
+/node_modules
+/venv
+__pycache__
+*.pyc
+
+# Arquivos de Build/Compilação
+/dist
+/build
+/tmp
+
+# Arquivos do Docker e Ambiente Local
+.dockerignore
+.DS_Store
+
+# Arquivos de Ambiente (MUITO IMPORTANTE: Onde estariam senhas/tokens)
+*.env
+.env
+.env.*
+
+# Segredos e Logs da Infraestrutura Local
+*.log
+*.err
+*temp*
+
+# EXCLUSÃO CRÍTICA DO KUBECONFIG/WSL
+# Isso evita que o Git rastreie a configuração do seu cluster Kind no WSL.
+# O ~ no caminho pode ser problemático no git, vamos usar o nome do diretório/arquivos:
+.kube/lab/

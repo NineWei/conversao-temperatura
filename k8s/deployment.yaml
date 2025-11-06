@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conversao-temperatura
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conversao-temperatura
+  template:
+    metadata:
+      labels:
+        app: conversao-temperatura
+    spec:
+      containers:
+      - name: conversao-temperatura
+        image: sa-saopaulo-1.ocir.io/grasg30lj5dl/conversao-temperatura:v1
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+        - name: ocir-secret
