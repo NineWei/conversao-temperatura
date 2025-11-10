@@ -23,6 +23,9 @@ __pycache__
 *.err
 *temp*
 
+# EXCLUSÃO CRÍTICA DO RUNNER!
+runner-values.yaml
+
 # EXCLUSÃO CRÍTICA DO KUBECONFIG/WSL
 # Isso evita que o Git rastreie a configuração do seu cluster Kind no WSL.
 # O ~ no caminho pode ser problemático no git, vamos usar o nome do diretório/arquivos:

@@ -1,0 +1,13 @@
+# runner-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gitlab-runner-binding
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: gitlab-runner # O namespace onde o seu runner está instalado
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin # Concede todas as permissões no cluster
+  apiGroup: rbac.authorization.k8s.io
