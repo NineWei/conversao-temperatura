@@ -1,0 +1,1 @@
+Forçando novo pipeline para aplicar o curl wait
