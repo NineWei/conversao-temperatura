@@ -11,9 +11,9 @@ build_image:
   services:
     - docker:24.0.5-dind # Usa Docker-in-Docker para construir imagens
   variables:
-    DOCKER_HOST: tcp://docker:2375 # Variável para se conectar ao dind
-    # OCI_REGISTRY_URL: sa-saopaulo-1.ocir.io/tenancy-name
-    # Usar a variável de ambiente para o login e push
+    DOCKER_HOST: tcp://docker:2375
+    # Variável para se conectar ao dind
+    DOCKER_DRIVER: overlay2
     IMAGE_NAME: sa-saopaulo-1.ocir.io/grasg30lj5dl/conversao-temperatura:latest
 
   script:
@@ -21,7 +21,10 @@ build_image:
     # 1. Login no OCIR (Você precisa configurar as variáveis de ambiente no GitLab para isso!)
     # Estas variáveis devem ser configuradas em Settings -> CI/CD -> Variables
     # - docker login -u "$OCI_USERNAME" -p "$OCI_AUTH_TOKEN" sa-saopaulo-1.ocir.io
-
+    # NOVO: Script de espera para o serviço Docker-in-Docker
+    - apk add --no-cache curl
+    - while ! curl -sI http://docker:2375/version; do echo 'Aguardando o serviço Docker...'; sleep 1; done
+    # FIM DO NOVO SCRIPT
     # Por enquanto, vamos fazer um build local (sem push) para testar a infra
     # 2. Build da imagem (usa o Dockerfile que está em src/)
     - docker build -t $IMAGE_NAME ./src
