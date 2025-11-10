@@ -1,0 +1,53 @@
+stages:
+  - build
+  - deploy
+
+# =================================================================
+# STAGE 1: BUILD (Construir a imagem Docker)
+# =================================================================
+build_image:
+  stage: build
+  image: docker:24.0.5 # O Runner usará esta imagem para rodar o job
+  services:
+    - docker:24.0.5-dind # Usa Docker-in-Docker para construir imagens
+  variables:
+    DOCKER_HOST: tcp://docker:2375 # Variável para se conectar ao dind
+    # OCI_REGISTRY_URL: sa-saopaulo-1.ocir.io/tenancy-name
+    # Usar a variável de ambiente para o login e push
+    IMAGE_NAME: sa-saopaulo-1.ocir.io/grasg30lj5dl/conversao-temperatura:latest
+
+  script:
+    - echo "Iniciando build da imagem..."
+    # 1. Login no OCIR (Você precisa configurar as variáveis de ambiente no GitLab para isso!)
+    # Estas variáveis devem ser configuradas em Settings -> CI/CD -> Variables
+    # - docker login -u "$OCI_USERNAME" -p "$OCI_AUTH_TOKEN" sa-saopaulo-1.ocir.io
+
+    # Por enquanto, vamos fazer um build local (sem push) para testar a infra
+    # 2. Build da imagem (usa o Dockerfile que está em src/)
+    - docker build -t $IMAGE_NAME ./src
+
+    # 3. Logar e Push (Descomente APENAS quando configurar as variáveis OCI no GitLab)
+    # - docker push $IMAGE_NAME
+
+  tags:
+    - kubernetes
+
+# =================================================================
+# STAGE 2: DEPLOY (Aplicar o manifesto no Kubernetes)
+# =================================================================
+deploy_app:
+  stage: deploy
+  image: bitnami/kubectl:1.27.3 # O Runner usará esta imagem para interagir com o cluster
+  script:
+    - echo "Iniciando deploy no Kind..."
+    # O Runner já tem acesso ao cluster Kind (meu-lab-novo)
+    # Devido ao seu Kubeconfig estar acessível através do Runner
+    - kubectl apply -f k8s/
+    - echo "Deploy concluído!"
+
+  # Este job só roda se a branch principal (main) for alterada
+  only:
+    - main
+
+  tags:
+    - kubernetes
